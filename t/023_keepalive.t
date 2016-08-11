@@ -1,14 +1,18 @@
-use Test::More tests => 5;
-use Test::Exception;
-
 use strict;
 use warnings;
+
+use Test::Most;
+use Test::Exception;
+
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
 
 SKIP: {
 	my $can_test = eval { require Socket::Linux };
 	skip "Keepalive dependencies missing", 5 unless $can_test;
 
-	my $host = $ENV{'MQHOST'} || "dev.rabbitmq.com";
+	my $host = $ENV{'MQHOST'};
 
 	use_ok('Net::AMQP::RabbitMQ::PP');
 
@@ -39,4 +43,4 @@ SKIP: {
 	};
 }
 
-1;
+done_testing()

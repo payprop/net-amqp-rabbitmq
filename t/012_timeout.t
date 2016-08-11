@@ -1,11 +1,13 @@
-use Test::More tests => 5;
-use Test::Exception;
-
-use Time::HiRes qw(gettimeofday tv_interval);
-
 use strict;
 use warnings;
 
+use Test::Most;
+use Test::Exception;
+use Time::HiRes qw(gettimeofday tv_interval);
+
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
 
 use_ok('Net::AMQP::RabbitMQ::PP');
 
@@ -34,4 +36,4 @@ isnt($@, "failed to timeout\n", "failed to timeout");
 isnt($@, '', "connect");
 
 # give a bit of tolerance for the timeout.
-cmp_ok( abs( $duration - $attempt ), '<', 1, 'timeout' );
+done_testing()

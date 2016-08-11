@@ -1,12 +1,16 @@
-use Test::More tests => 3;
+use strict;
+use warnings;
+
+use Test::Most;
 use Test::Exception;
 
 use Time::HiRes qw(gettimeofday tv_interval);
 
-use strict;
-use warnings;
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
 
-my $host = $ENV{'MQHOST'} || "dev.rabbitmq.com";
+my $host = $ENV{'MQHOST'};
 
 use_ok('Net::AMQP::RabbitMQ::PP');
 
@@ -26,3 +30,5 @@ throws_ok {
 	);
 	alarm 0;
 } qr/Read error: Connection reset/, "Invalid credentials";
+
+done_testing();

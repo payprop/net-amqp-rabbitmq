@@ -1,10 +1,14 @@
-use Test::More tests => 6;
-use Test::Exception;
-
 use strict;
 use warnings;
 
-my $host = $ENV{MQHOST} || "dev.rabbitmq.com";
+use Test::Most;
+use Test::Exception;
+
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
+
+my $host = $ENV{'MQHOST'};
 
 use_ok('Net::AMQP::RabbitMQ::PP');
 
@@ -43,3 +47,5 @@ throws_ok {
 		auto_delete => $delete,
 	);
 } qr/PRECONDITION_FAILED/, "Redeclaring queue without header arguments fails.";
+
+done_testing();

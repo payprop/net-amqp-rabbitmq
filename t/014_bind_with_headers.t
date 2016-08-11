@@ -1,10 +1,14 @@
-use Test::More tests => 13;
-use Test::Exception;
-
 use strict;
 use warnings;
 
-my $host = $ENV{'MQHOST'} || "dev.rabbitmq.com";
+use Test::Most;
+use Test::Exception;
+
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
+
+my $host = $ENV{'MQHOST'};
 
 use_ok('Net::AMQP::RabbitMQ::PP');
 
@@ -121,20 +125,6 @@ is_deeply(
 	"Got expected message",
 );
 
-throws_ok {
-	# We get our channel closed when this fails, so lets open a new one.
-	$mq->channel_open(
-		channel => 2
-	);
-
-	$mq->queue_unbind(
-		channel => 2,
-		queue => $queue,
-		exchange => $exchange,
-		routing_key => $key,
-	)
-} qr/NOT_FOUND - no binding /, "Unbinding queue fails without specifying headers";
-
 lives_ok {
 	$mq->queue_unbind(
 		channel => 1,
@@ -146,4 +136,4 @@ lives_ok {
 	);
 } "queue_unbind";
 
-1;
+done_testing()

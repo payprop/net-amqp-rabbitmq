@@ -3,7 +3,7 @@ package Net::AMQP::RabbitMQ::PP;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Carp;
 use Cwd;
@@ -158,7 +158,7 @@ sub _startup {
 		# Can plug all sorts of random stuff in here.
 		platform => 'Perl/NetAMQP',
 		product => Cwd::abs_path( $PROGRAM_NAME ),
-		information => 'http://github.com/emarcotte/net-amqp-rabbitmq',
+		information => 'http://github.com/Humanstate/net-amqp-rabbitmq',
 		version => $VERSION,
 		host => hostname(),
 	);
@@ -391,7 +391,7 @@ sub _local_receive {
 			# TODO This is ugly as sin.
 			# Messages on channel 0 saying that the connection is closed. That's
 			# a big error, we should probably mark this session as invalid.
-			# TODO could comebind checks, mini optimization
+			# TODO could combine checks, mini optimization
 			if( $self->_check_frame( $frame, ( method_frame => [ 'Net::AMQP::Protocol::Connection::Close'] ) ) ) {
 				$self->_clear_handle;
 				Carp::croak sprintf 'Connection closed %s', $frame->method_frame->reply_text;
@@ -683,7 +683,7 @@ sub basic_cancel_callback {
 	my ( $self, %args ) = @_;
 	$self->{basic_cancel_callback} = $args{callback} if( $args{callback} );
 	return $self->{basic_cancel_callback};
-};
+}
 
 sub basic_cancel {
 	my ( $self, %args ) = @_;
@@ -889,7 +889,11 @@ __END__
 
 =head1 NAME
 
-Net::AMQP::RabbitMQ::PP - Perl-based RabbitMQ AMQP client
+Net::AMQP::RabbitMQ::PP - Pure perl AMQP client for RabbitMQ
+
+=for html
+<a href='https://travis-ci.org/Humanstate/net-amqp-rabbitmq?branch=master'><img src='https://travis-ci.org/Humanstate/net-amqp-rabbitmq.svg?branch=master' alt='Build Status' /></a>
+<a href='https://coveralls.io/r/Humanstate/net-amqp-rabbitmq?branch=master'><img src='https://coveralls.io/repos/Humanstate/net-amqp-rabbitmq/badge.png?branch=master' alt='Coverage Status' /></a>
 
 =head1 SYNOPSIS
 
@@ -905,58 +909,281 @@ Net::AMQP::RabbitMQ::PP - Perl-based RabbitMQ AMQP client
 
 =head1 DESCRIPTION
 
-Stub documentation for this module was created by ExtUtils::ModuleMaker.
-It looks like the author of the extension was negligent enough
-to leave the stub unedited.
-
-Blah blah blah.
+Like L<Net::RabbitMQ> but pure perl rather than a wrapper around librabbitmq.
 
 =head1 VERSION
 
-This is 0.1
+0.2
 
 =head1 SUBROUTINES/METHODS
+
+A list of methods with their default arguments (undef = no default)
 
 =head2 new
 
 Loads the AMQP protocol definition, primarily. Will not be an active
-connection until Connect is called.
+connection until ->connect is called.
+
+	my $mq = Net::AMQP::RabbitMQ::PP->new;
 
 =head2 connect
 
+Connect to the server. Default arguments are show below:
 
-$args{timeout}
-$args{host}
-$args{port}
-$args{password}
-$args{username}
-$args{virtual_host}
-$args{heartbeat}
+	$mq->connect(
+		host        => "localhost",
+		port        => 5672,
+		timeout     => undef,
+		username    => 'guest',
+		password    => 'guest',
+		virtualhost => '/',
+		heartbeat   => undef,
+	);
 
-=head2 _startup
+=head2 disconnect
 
-Does the initial connection back-and-forth with Rabbit to configure the
-connection before we start delivering messages.
+Disconnects from the server
 
-=head1 BUGS AND LIMITATIONS
+	$mq->disconnect;
+
+=head2 set_keepalive
+
+Set a keep alive poller. Note: requires Socket::Linux
+
+	$mq->set_keepalive(
+		idle     => $secs, # time between last meaningful packet and first keep alive
+		count    => $n,    # number of failures to allow,
+		interval => $secs, # time between keep alives
+	);
+
+=head2 receive
+
+Receive the nextframe
+
+	my $rv = $mq->receive;
+
+Content or $rv will look something like:
+
+	{
+		payload              => $str,
+		content_header_frame => Net::AMQP::Frame::Header,
+		delivery_frame       => Net::AMQP::Frame::Method,
+	}
+
+=head2 channel_open
+
+Open the given channel:
+
+	$mq->channel_open( channel => undef );
+
+=head2 exchange_declare
+
+Instantiate an exchange with a previously opened channel:
+
+	$mq->exchange_declare(
+		channel            => undef,
+		exchange           => undef,
+		exchange_type      => undef,
+		passive            => undef,
+		durable            => undef,
+		auto_delete        => undef,
+		internal           => undef,
+		alternate_exchange => undef,
+	);
+
+=head2 exchange_delete
+
+Delete a previously instantiated exchange
+
+	$mq->exchange_delete(
+		channel   => undef,
+		exchange  => undef,
+		if_unused => undef,
+	);
+
+=head2 queue_declare
+
+	$mq->exchange_declare(
+		channel     => undef,
+		queue       => undef,
+		exclusive   => undef,
+		passive     => undef,
+		durable     => undef,
+		auto_delete => undef,
+		expires     => undef,
+		message_ttl => undef,
+	);
+
+=head2 queue_bind
+
+	$mq->queue_bind(
+		channel     => undef,
+		queue       => undef,
+		exchange    => undef,
+		routing_key => undef,
+		headers     => {},
+		x_match     => undef,
+	);
+
+=head2 queue_delete
+
+	$mq->queue_delete(
+		channel   => undef,
+		queue     => undef,
+		if_empty  => undef,
+		if_unused => undef,
+	);
+
+=head2 queue_unbind
+
+	$mq->queue_bind(
+		channel     => undef,
+		queue       => undef,
+		exchange    => undef,
+		routing_key => undef,
+		headers     => {},
+		x_match     => undef,
+	);
+
+=head2 queue_purge
+
+	$mq->queue_purge(
+		channel => undef,
+		queue   => undef,
+	);
+
+=head2 basic_ack
+
+	$mq->basic_ack(
+		channel      => undef,
+		delivery_tag => undef,
+		multiple     => undef,
+	);
+
+=head2 basic_cancel_callback
+
+	$mq->basic_cancel_callback(
+		callback => undef,
+	);
+
+=head2 basic_cancel
+
+	$mq->basic_cancel(
+		channel      => undef,
+		queue        => undef,
+		consumer_tag => undef,
+	);
+
+=head2 basic_get
+
+	$mq->basic_get(
+		channel => undef,
+		queue   => undef,
+		no_ack  => undef,
+	);
+
+=head2 basic_publish
+
+	$mq->basic_publish(
+		channel     => undef,
+		payload     => undef,
+		exchange    => undef,
+		routing_key => undef,
+		mandatory   => undef,
+		immediate   => undef,
+		props       => {
+			content_type     => undef,
+			content_encoding => undef,
+			headers          => undef,
+			delivery_mode    => undef,
+			priority         => undef,
+			correlation_id   => undef,
+			reply_to         => undef,
+			expiration       => undef,
+			message_id       => undef,
+			timestamp        => undef,
+			type             => undef,
+			user_id          => undef,
+			app_id           => undef,
+			cluster_id       => undef,
+		},
+	);
+
+=head2 basic_consume
+
+	$mq->basic_consume(
+		channel      => undef,
+		queue        => undef,
+		consumer_tag => undef,
+		exclusive    => undef,
+		no_ack       => undef,
+	);
+
+=head2 basic_reject
+
+	$mq->basic_reject(
+		channel      => undef,
+		delivery_tag => undef,
+		requeue      => undef,
+	);
+
+=head2 basic_qos
+
+	$mq->basic_qos(
+		channel        => undef,
+		global         => undef,
+		prefetch_count => undef,
+		prefetch_size  => undef,
+	);
+
+=head2 transaction_select
+
+=head2 transaction_commit
+
+=head2 transaction_rollback
+
+=head2 confirm_select
+
+All take channel => $channel as args.
+
+=head2 heartbeat
+
+TODO
+
+=head1 BUGS, LIMITATIONS, AND CAVEATS
 
 Please report all bugs to the issue tracker on github.
-https://github.com/emarcotte/net-amqp-rabbitmq/issues
+https://github.com/Humanstate/net-amqp-rabbitmq/issues
 
-One known limitation is that we cannot automatically sending heartbeat frames in
+One known limitation is that we cannot automatically send heartbeat frames in
 a useful way.
+
+A caveat is that I (LEEJO) didn't write this, I just volunteered to take
+over maintenance and upload to CPAN since it is used in our stack. So i
+apologize for the poor documentation. Have a look at the tests if any of the
+documentation is not clear.
+
+Another caveat is that the tests require MQHOST=a.rabbitmq.host to be of any
+use, they used to default to dev.rabbitmq.com but that is currently MIA. If
+MQHOST is not set they will be skipped.
 
 =head1 SUPPORT
 
 Use the issue tracker on github to reach out for support.
-https://github.com/emarcotte/net-amqp-rabbitmq/issues
+https://github.com/Humanstate/net-amqp-rabbitmq/issues
 
 =head1 AUTHOR
+
+Originally:
 
 	Eugene Marcotte
 	athenahealth
 	emarcotte@athenahealth.com
 	http://athenahealth.com
+
+Current maintainer:
+
+	leejo@cpan.org
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -968,17 +1195,10 @@ it and/or modify it under the same terms as Perl itself.
 The full text of the license can be found in the
 LICENSE file included with this module.
 
-=head1 INCOMPATIBILITIES
-
 =head1 SEE ALSO
 
-perl(1), Net::RabbitMQ, Net::AMQP
+L<Net::RabbitMQ>
 
-=head1 DIAGNOSTICS
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-=head1 DEPENDENCIES
-
+L<Net::AMQP>
 
 =cut

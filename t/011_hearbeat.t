@@ -1,12 +1,16 @@
-use Test::More tests => 7;
-use Test::Exception;
-use English qw( -no_match_vars );
 use strict;
 use warnings;
 
+use Test::Most;
+use Test::Exception;
+use English qw( -no_match_vars );
 use Time::HiRes;
 
-my $host = $ENV{MQHOST} || "dev.rabbitmq.com";
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
+
+my $host = $ENV{MQHOST};
 use_ok('Net::AMQP::RabbitMQ::PP');
 
 ok( my $mq = Net::AMQP::RabbitMQ::PP->new() );
@@ -58,4 +62,4 @@ throws_ok {
 	);
 } $exception, "failed publish";
 
-1;
+done_testing()

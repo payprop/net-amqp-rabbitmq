@@ -1,11 +1,14 @@
-# -*- perl -*-
+use strict;
+use warnings;
 
-# t/001_load.t - check module loading and create testing directory
+use Test::Most;
 
-use Test::More tests => 2;
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
 
 use_ok( 'Net::AMQP::RabbitMQ::PP' );
 
 isa_ok( my $object = Net::AMQP::RabbitMQ::PP->new (), 'Net::AMQP::RabbitMQ::PP');
 
-
+done_testing();

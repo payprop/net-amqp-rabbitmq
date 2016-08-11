@@ -1,9 +1,14 @@
-use Test::More tests => 13;
-use Test::Exception;
 use strict;
 use warnings;
 
-my $host = $ENV{'MQHOST'} || "dev.rabbitmq.com";
+use Test::Most;
+use Test::Exception;
+
+use FindBin qw/ $Bin /;
+use lib $Bin;
+use Net::AMQP::RabbitMQ::PP::Test;
+
+my $host = $ENV{'MQHOST'};
 
 use_ok('Net::AMQP::RabbitMQ::PP');
 
@@ -101,4 +106,4 @@ is_deeply(
 	"Received headers"
 );
 
-1;
+done_testing();

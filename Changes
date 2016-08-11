@@ -1,6 +1,7 @@
 Revision history for Perl module NetRabbitMQPerl
 
-0.01 Thu Jan 10 17:38:54 2013
+0.02 2016-08-11
+    - first release to CPAN
+
+0.01 2013-01-10
     - original version; created by ExtUtils::ModuleMaker 0.51
-
-

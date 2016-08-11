@@ -1,0 +1,8 @@
+.travis.yml
+^MYMETA\.yml$
+^MYMETA\.json$
+.git/
+MANIFEST.SKIP
+\*.bak
+.gitignore
+Todo

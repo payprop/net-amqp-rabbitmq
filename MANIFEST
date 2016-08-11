@@ -1,11 +1,11 @@
-Build.PL
 Changes
 LICENSE
 MANIFEST
 README.md
-Todo
 lib/Net/AMQP/RabbitMQ/PP.pm
 share/amqp0-9-1.extended.xml
+t/000_changes.t
+t/000_kwalitee.t
 t/001_declare_exchange.t
 t/001_load.t
 t/002_publish.t
@@ -29,6 +29,6 @@ t/019_consumer_cancel.t
 t/020_bad_credentials.t
 t/021_read_timeout.t
 t/022_close.t
+t/023_keepalive.t
+t/024_exclusive_consume.t
 Makefile.PL
-META.yml
-META.json
