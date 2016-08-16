@@ -31,4 +31,5 @@ t/021_read_timeout.t
 t/022_close.t
 t/023_keepalive.t
 t/024_exclusive_consume.t
+t/Net/AMQP/RabbitMQ/PP/Test.pm
 Makefile.PL

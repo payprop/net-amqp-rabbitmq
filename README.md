@@ -1,6 +1,6 @@
 # NAME
 
-Net::AMQP::RabbitMQ::PP - Pure Perl RabbitMQ AMQP client
+Net::AMQP::RabbitMQ::PP - Pure perl AMQP client for RabbitMQ
 
 <div>
 
@@ -26,7 +26,7 @@ Like [Net::RabbitMQ](https://metacpan.org/pod/Net::RabbitMQ) but pure perl rathe
 
 # VERSION
 
-0.2
+0.3
 
 # SUBROUTINES/METHODS
 

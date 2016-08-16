@@ -22,6 +22,7 @@ WriteMakefile(
 		'Net::AMQP'       => 0.06,
 		'List::MoreUtils' => 0.25,
 		'File::ShareDir'  => 1.00,
+        'File::ShareDir::Install' => 0.11,
 		'Try::Tiny'       => 0.12,
 		'Socket::Linux'   => 0.01,
     },
