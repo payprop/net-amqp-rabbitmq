@@ -18,6 +18,9 @@ use Sys::Hostname;
 use Try::Tiny;
 use Time::HiRes;
 
+use Data::Dumper;
+use Data::Printer;
+
 sub new {
 	my ( $class, %parameters ) = @_;
 
@@ -430,9 +433,18 @@ sub _receive_delivery {
 		$payload .= $frame->{payload};
 	}
 
+    my %return = (
+        content_header_frame => $headerframe,
+        payload              => $payload,
+    );
+    if ( $args{delivery_tag} ) {
+        $return{delivery_tag} = $args{delivery_tag};
+    }
+
 	return (
-		content_header_frame => $headerframe,
-		payload => $payload,
+        %return
+        #content_header_frame => $headerframe,
+        #payload => $payload,
 	);
 }
 
@@ -723,9 +735,11 @@ sub basic_get {
 		return;
 	}
 	else {
+        my $delivery_tag = $get->delivery_tag;
 		return {
 			$self->_receive_delivery(
-				channel => $channel,
+				channel      => $channel,
+                delivery_tag => $delivery_tag,
 			),
 		}
 	}
