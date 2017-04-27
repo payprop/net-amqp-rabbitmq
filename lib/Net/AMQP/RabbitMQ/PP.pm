@@ -18,9 +18,6 @@ use Sys::Hostname;
 use Try::Tiny;
 use Time::HiRes;
 
-use Data::Dumper;
-use Data::Printer;
-
 sub new {
 	my ( $class, %parameters ) = @_;
 
