@@ -430,18 +430,10 @@ sub _receive_delivery {
 		$payload .= $frame->{payload};
 	}
 
-    my %return = (
-        content_header_frame => $headerframe,
-        payload              => $payload,
-    );
-    if ( $args{delivery_tag} ) {
-        $return{delivery_tag} = $args{delivery_tag};
-    }
-
 	return (
-        %return
-        #content_header_frame => $headerframe,
-        #payload => $payload,
+        content_header_frame => $headerframe,
+        payload => $payload,
+        ( $args{delivery_tag} ? ( delivery_tag => $args{delivery_tag} ) : () )
 	);
 }
 
