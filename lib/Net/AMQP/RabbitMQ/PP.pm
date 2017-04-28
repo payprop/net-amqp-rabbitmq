@@ -3,7 +3,7 @@ package Net::AMQP::RabbitMQ::PP;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Carp;
 use Cwd;
@@ -916,7 +916,7 @@ Like L<Net::RabbitMQ> but pure perl rather than a wrapper around librabbitmq.
 
 =head1 VERSION
 
-0.3
+0.04
 
 =head1 SUBROUTINES/METHODS
 
@@ -1187,6 +1187,10 @@ Originally:
 Current maintainer:
 
 	leejo@cpan.org
+
+Contributors:
+
+    Ben Kaufman
 
 =head1 LICENSE AND COPYRIGHT
 
