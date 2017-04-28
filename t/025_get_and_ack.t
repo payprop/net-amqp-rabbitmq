@@ -141,23 +141,6 @@ lives_ok {
 'channel_open';
 
 lives_ok {
-    $mq->exchange_declare(
-        %exchangeparams,
-        exchange_type => 'direct',
-    );
-}
-'exchange_declare';
-
-lives_ok {
-    $mq->queue_bind(
-        %queueparams,
-        %exchangeparams,
-        routing_key  => $routing_key,
-    );
-}
-"queue_bind";
-
-lives_ok {
     $getr = $mq->basic_get( %queueparams );
 }
 'basic_get after reconnect';
@@ -177,12 +160,24 @@ lives_ok {
 'basic_ack';
 
 lives_ok {
-    $getr = $mq->basic_get(
-        channel => 1,
-        queue   => $queuename,
-    );
+    $mq->disconnect;
 }
-'basic_get after ack';
+'disconnect after ack';
+
+lives_ok {
+    $mq->connect( %credentials );
+}
+'re connect after ack';
+
+lives_ok {
+    $mq->channel_open( channel => $channel );
+}
+'channel_open';
+
+lives_ok {
+    $getr = $mq->basic_get( %queueparams );
+}
+'basic_get after reconnect after ack';
 
 is_deeply( $getr, undef, 'basic_get should return empty after ack' );
 
