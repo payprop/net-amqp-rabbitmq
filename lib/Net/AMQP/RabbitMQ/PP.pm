@@ -431,8 +431,9 @@ sub _receive_delivery {
 	}
 
 	return (
-		content_header_frame => $headerframe,
-		payload => $payload,
+        content_header_frame => $headerframe,
+        payload => $payload,
+        ( $args{delivery_tag} ? ( delivery_tag => $args{delivery_tag} ) : () )
 	);
 }
 
@@ -723,9 +724,11 @@ sub basic_get {
 		return;
 	}
 	else {
+        my $delivery_tag = $get->delivery_tag;
 		return {
 			$self->_receive_delivery(
-				channel => $channel,
+				channel      => $channel,
+                delivery_tag => $delivery_tag,
 			),
 		}
 	}

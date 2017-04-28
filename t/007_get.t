@@ -96,7 +96,8 @@ is_deeply(
 			header_frame => Net::AMQP::Protocol::Basic::ContentHeader->new(
 			),
 		),
-		payload => 'Magic Transient Payload',
+        delivery_tag => 1,
+		payload      => 'Magic Transient Payload',
 	},
 	"get should see message"
 );
@@ -140,7 +141,8 @@ is_deeply(
 			header_frame => Net::AMQP::Protocol::Basic::ContentHeader->new(
 			),
 		),
-		payload => 'Magic Transient Payload 2',
+        delivery_tag => 2,
+		payload      => 'Magic Transient Payload 2',
 	},
 	"get should see message"
 );

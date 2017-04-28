@@ -109,6 +109,7 @@ is_deeply(
 			header_frame => Net::AMQP::Protocol::Basic::ContentHeader->new(
 			),
 		),
+        delivery_tag => 1,
 		payload => 'to be committed',
 	},
 	'commited payload'
