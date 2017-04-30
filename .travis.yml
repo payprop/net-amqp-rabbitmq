@@ -9,6 +9,11 @@ perl:
     #- "5.12"
     #- "5.10"
 
+matrix:
+    include:
+        - env: COVERAGE=1
+
+
 before_install:
     - git clone git://github.com/haarg/perl-travis-helper
     - source perl-travis-helper/init
