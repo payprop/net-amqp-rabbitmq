@@ -18,8 +18,8 @@ before_install:
     - cd $BUILD_DIR
     - cpanm --quiet --notest Devel::Cover::Report::Coveralls
     - cpanm --showdeps .
-    - cpanm --notest --installdeps .
-
+    - cpanm -n ExtUtils::MakeMaker Test::File::ShareDir Socket::Linux Test::Exception Try::Tiny Test::Most Net::AMQP File::ShareDir File::ShareDir::Install List::MoreUtils
+    
 install:
     - export RELEASE_TESTING=1 AUTOMATED_TESTING=1 AUTHOR_TESTING=1 HARNESS_OPTIONS=j1:c HARNESS_TIMER=1 MQHOST=127.0.0.1
 
