@@ -9,9 +9,7 @@ perl:
     #- "5.12"
     #- "5.10"
 
-matrix:
-    include:
-        - env: COVERAGE=1
+env: COVERAGE=1
 
 
 before_install:
