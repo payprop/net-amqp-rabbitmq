@@ -1,16 +1,13 @@
 language: perl
 perl:
     - "5.24"
-    #- "5.22"
-    #- "5.20"
-    #- "5.18"
-    #- "5.16"
-    #- "5.14"
-    #- "5.12"
-    #- "5.10"
-
-env: COVERAGE=1
-
+    - "5.22"
+    - "5.20"
+    - "5.18"
+    - "5.16"
+    - "5.14"
+    - "5.12"
+    - "5.10"
 
 before_install:
     - git clone git://github.com/haarg/perl-travis-helper
@@ -19,24 +16,19 @@ before_install:
     - perl -V
     - build-dist
     - cd $BUILD_DIR
-    #- cpanm --quiet --notest Devel::Cover::Report::Coveralls
-    #- cpanm --showdeps .
-    ## Line below did work as opposed to --installdeps
-    #- cpanm -n ExtUtils::MakeMaker Test::File::ShareDir Socket::Linux Test::Exception Try::Tiny Test::Most Net::AMQP File::ShareDir File::ShareDir::Install List::MoreUtils
 
 install:
     - export RELEASE_TESTING=1 AUTOMATED_TESTING=1 AUTHOR_TESTING=1 HARNESS_OPTIONS=j1:c HARNESS_TIMER=1 MQHOST=127.0.0.1
+    - cpanm --quiet --notest Devel::Cover::Report::Coveralls
+    #- cpanm --quiet --notest --installdeps .
     - cpan-install --deps
-    - cpan-install --coverage
-
 
 script:
     - PERL5OPT=-MDevel::Cover=-ignore,"t/",+ignore,"prove",-coverage,statement,branch,condition,path,subroutine prove -lrs t
     - cover
-    #- perl Makefile.PL && make && make test && make install && cover -test -report coveralls
 
-#after_success:
-#    - cover -report coveralls
+after_success:
+    - cover -report coveralls
 
 sudo: required
 
