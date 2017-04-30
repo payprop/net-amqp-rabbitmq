@@ -26,7 +26,7 @@ Like [Net::RabbitMQ](https://metacpan.org/pod/Net::RabbitMQ) but pure perl rathe
 
 # VERSION
 
-0.3
+0.04
 
 # SUBROUTINES/METHODS
 
@@ -297,6 +297,10 @@ Originally:
 Current maintainer:
 
         leejo@cpan.org
+
+Contributors:
+
+    Ben Kaufman
 
 # LICENSE AND COPYRIGHT
 
