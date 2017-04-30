@@ -1,13 +1,13 @@
 language: perl
 perl:
     - "5.24"
-    - "5.22"
-    - "5.20"
-    - "5.18"
-    - "5.16"
-    - "5.14"
-    - "5.12"
-    - "5.10"
+    #- "5.22"
+    #- "5.20"
+    #- "5.18"
+    #- "5.16"
+    #- "5.14"
+    #- "5.12"
+    #- "5.10"
 
 before_install:
     - git clone git://github.com/haarg/perl-travis-helper
@@ -17,6 +17,7 @@ before_install:
     - build-dist
     - cd $BUILD_DIR
     - cpanm --quiet --notest Devel::Cover::Report::Coveralls
+    - cpanm --showdeps .
     - cpanm --notest --installdeps .
 
 install:
@@ -24,11 +25,12 @@ install:
 
 
 script:
-    - PERL5OPT=-MDevel::Cover=-ignore,"t/",+ignore,"prove",-coverage,statement,branch,condition,path,subroutine prove -lrs t
-    - cover
+    #- PERL5OPT=-MDevel::Cover=-ignore,"t/",+ignore,"prove",-coverage,statement,branch,condition,path,subroutine prove -lrs t
+    #- cover
+    - perl Makefile.PL && make && make test && make install && cover -test -report coveralls
 
-after_success:
-    - cover -report coveralls
+#after_success:
+#    - cover -report coveralls
 
 sudo: required
 
