@@ -198,6 +198,11 @@ sub _startup {
 		$heartbeat = $serverheartbeat;
 	}
 
+	my $frame_max = $servertuning->frame_max;
+	if ($frame_max > 131072) {
+		$frame_max = 131072;
+	}
+
 	# Respond to the tune request with tuneok and then officially kick off a
 	# connection to the virtual host.
 	$self->rpc_request(
@@ -205,7 +210,7 @@ sub _startup {
 		output => [
 			Net::AMQP::Protocol::Connection::TuneOk->new(
 				channel_max => 0,
-				frame_max => 131072,
+				frame_max => $frame_max,
 				heartbeat => $heartbeat,
 			),
 			Net::AMQP::Protocol::Connection::Open->new(
