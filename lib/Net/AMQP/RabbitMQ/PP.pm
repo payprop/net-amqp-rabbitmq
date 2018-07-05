@@ -11,6 +11,7 @@ use English qw(-no_match_vars);
 use File::ShareDir;
 use IO::Select;
 use IO::Socket::INET;
+use IO::Socket::SSL;
 use Socket qw( IPPROTO_TCP );
 use List::MoreUtils;
 use Net::AMQP;
@@ -47,13 +48,22 @@ sub connect {
 			Time::HiRes::alarm( $args{timeout} );
 		}
 
-		$self->_set_handle(
-			IO::Socket::INET->new(
-				PeerAddr => $args{host} || 'localhost',
-				PeerPort => $args{port} || 5672,
-				Proto => 'tcp',
-			) or Carp::croak "Could not connect: $EVAL_ERROR"
-		);
+		if( $args{secure} ) {
+			$self->_set_handle(
+				IO::Socket::SSL->new(
+					PeerAddr => $args{host} || 'localhost',
+					PeerPort => $args{port} || 5671,
+				) or Carp::croak "Could not connect: $EVAL_ERROR"
+			);
+		} else {
+			$self->_set_handle(
+				IO::Socket::INET->new(
+					PeerAddr => $args{host} || 'localhost',
+					PeerPort => $args{port} || 5672,
+					Proto => 'tcp',
+				) or Carp::croak "Could not connect: $EVAL_ERROR"
+			);
+		}
 
 		$self->_select( IO::Select->new( $self->_get_handle ) );
 
@@ -188,6 +198,11 @@ sub _startup {
 		$heartbeat = $serverheartbeat;
 	}
 
+	my $frame_max = $servertuning->frame_max;
+	if ($frame_max > 131072) {
+		$frame_max = 131072;
+	}
+
 	# Respond to the tune request with tuneok and then officially kick off a
 	# connection to the virtual host.
 	$self->rpc_request(
@@ -195,7 +210,7 @@ sub _startup {
 		output => [
 			Net::AMQP::Protocol::Connection::TuneOk->new(
 				channel_max => 0,
-				frame_max => 131072,
+				frame_max => $frame_max,
 				heartbeat => $heartbeat,
 			),
 			Net::AMQP::Protocol::Connection::Open->new(
@@ -431,9 +446,9 @@ sub _receive_delivery {
 	}
 
 	return (
-        content_header_frame => $headerframe,
-        payload => $payload,
-        ( $args{delivery_tag} ? ( delivery_tag => $args{delivery_tag} ) : () )
+		content_header_frame => $headerframe,
+		payload => $payload,
+		( $args{delivery_tag} ? ( delivery_tag => $args{delivery_tag} ) : () )
 	);
 }
 
@@ -452,6 +467,7 @@ sub receive {
 			return {
 				$self->_receive_delivery(
 					channel => $nextframe->channel,
+					delivery_tag => $method_frame->delivery_tag,
 				),
 				delivery_frame => $nextframe,
 			};
@@ -724,11 +740,11 @@ sub basic_get {
 		return;
 	}
 	else {
-        my $delivery_tag = $get->delivery_tag;
+		my $delivery_tag = $get->delivery_tag;
 		return {
 			$self->_receive_delivery(
 				channel      => $channel,
-                delivery_tag => $delivery_tag,
+				delivery_tag => $delivery_tag,
 			),
 		}
 	}
