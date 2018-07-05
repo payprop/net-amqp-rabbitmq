@@ -11,6 +11,7 @@ use English qw(-no_match_vars);
 use File::ShareDir;
 use IO::Select;
 use IO::Socket::INET;
+use IO::Socket::SSL;
 use Socket qw( IPPROTO_TCP );
 use List::MoreUtils;
 use Net::AMQP;
@@ -47,13 +48,22 @@ sub connect {
 			Time::HiRes::alarm( $args{timeout} );
 		}
 
-		$self->_set_handle(
-			IO::Socket::INET->new(
-				PeerAddr => $args{host} || 'localhost',
-				PeerPort => $args{port} || 5672,
-				Proto => 'tcp',
-			) or Carp::croak "Could not connect: $EVAL_ERROR"
-		);
+		if( $args{secure} ) {
+			$self->_set_handle(
+				IO::Socket::SSL->new(
+					PeerAddr => $args{host} || 'localhost',
+					PeerPort => $args{port} || 5671,
+				) or Carp::croak "Could not connect: $EVAL_ERROR"
+			);
+		} else {
+			$self->_set_handle(
+				IO::Socket::INET->new(
+					PeerAddr => $args{host} || 'localhost',
+					PeerPort => $args{port} || 5672,
+					Proto => 'tcp',
+				) or Carp::croak "Could not connect: $EVAL_ERROR"
+			);
+		}
 
 		$self->_select( IO::Select->new( $self->_get_handle ) );
 
