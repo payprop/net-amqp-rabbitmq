@@ -467,6 +467,7 @@ sub receive {
 			return {
 				$self->_receive_delivery(
 					channel => $nextframe->channel,
+					delivery_tag => $method_frame->delivery_tag,
 				),
 				delivery_frame => $nextframe,
 			};
