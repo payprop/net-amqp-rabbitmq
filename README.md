@@ -26,7 +26,7 @@ Like [Net::RabbitMQ](https://metacpan.org/pod/Net::RabbitMQ) but pure perl rathe
 
 # VERSION
 
-0.06
+0.07
 
 # SUBROUTINES/METHODS
 
@@ -44,13 +44,14 @@ connection until ->connect is called.
 Connect to the server. Default arguments are show below:
 
         $mq->connect(
-                host        => "localhost",
-                port        => 5672,
-                timeout     => undef,
-                username    => 'guest',
-                password    => 'guest',
-                virtualhost => '/',
-                heartbeat   => undef,
+                host           => "localhost",
+                port           => 5672,
+                timeout        => undef,
+                username       => 'guest',
+                password       => 'guest',
+                virtualhost    => '/',
+                heartbeat      => undef,
+                socket_timeout => 5,
         );
 
 connect can also take a secure flag for SSL connections, this will only work if

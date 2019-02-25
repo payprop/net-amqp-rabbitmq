@@ -1,5 +1,8 @@
 Revision history for Perl module NetRabbitMQPerl
 
+0.07 2019-02-25
+    - [add] Socket Timeout support (GH #10)
+
 0.06 2018-08-02
     - [add] SSL support - requires optional IO::Socket::SSL (GH #9)
       thanks to Jonathan Briggs for the above patch
