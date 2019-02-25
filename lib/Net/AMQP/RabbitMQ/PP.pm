@@ -942,7 +942,7 @@ connection until ->connect is called.
 
 =head2 connect
 
-Connect to the server. Default arguments are show below:
+Connect to the server. Default arguments are shown below:
 
 	$mq->connect(
 		host           => "localhost",
@@ -956,7 +956,7 @@ Connect to the server. Default arguments are show below:
 	);
 
 connect can also take a secure flag for SSL connections, this will only work if
-IO::Socket::SSL is available
+L<IO::Socket::SSL> is available
 
 	$mq->connect(
 		...
@@ -971,7 +971,7 @@ Disconnects from the server
 
 =head2 set_keepalive
 
-Set a keep alive poller. Note: requires Socket::Linux
+Set a keep alive poller. Note: requires L<Socket::Linux>
 
 	$mq->set_keepalive(
 		idle     => $secs, # time between last meaningful packet and first keep alive
@@ -1182,7 +1182,7 @@ One known limitation is that we cannot automatically send heartbeat frames in
 a useful way.
 
 A caveat is that I (LEEJO) didn't write this, I just volunteered to take
-over maintenance and upload to CPAN since it is used in our stack. So i
+over maintenance and upload to CPAN since it is used in our stack. So I
 apologize for the poor documentation. Have a look at the tests if any of the
 documentation is not clear.
 
