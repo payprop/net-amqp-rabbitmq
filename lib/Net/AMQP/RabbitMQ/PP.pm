@@ -62,6 +62,7 @@ sub connect {
 				PeerAddr => $args{host} || 'localhost',
 				PeerPort => $args{port} || ( $args{secure} ? 5671 : 5672 ),
 				( ! $args{secure} ? ( Proto => 'tcp' ) : () ),
+				( $args{socket_timeout} ? ( Timeout => $args{socket_timeout} ) : () ),
 			) or Carp::croak "Could not connect: $EVAL_ERROR"
 		);
 
@@ -944,13 +945,14 @@ connection until ->connect is called.
 Connect to the server. Default arguments are show below:
 
 	$mq->connect(
-		host        => "localhost",
-		port        => 5672,
-		timeout     => undef,
-		username    => 'guest',
-		password    => 'guest',
-		virtualhost => '/',
-		heartbeat   => undef,
+		host           => "localhost",
+		port           => 5672,
+		timeout        => undef,
+		username       => 'guest',
+		password       => 'guest',
+		virtualhost    => '/',
+		heartbeat      => undef,
+		socket_timeout => 5,
 	);
 
 connect can also take a secure flag for SSL connections, this will only work if
