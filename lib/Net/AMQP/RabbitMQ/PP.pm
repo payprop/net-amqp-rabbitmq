@@ -50,11 +50,14 @@ sub connect {
 		}
 
 		my $connection_class = "IO::Socket::INET";
+		my %connection_args;
 
 		if ( $args{secure} ) {
 			die "IO::Socket::SSL is required for secure connections"
 				if ! HAS_TLS;
 			$connection_class = "IO::Socket::SSL";
+			my @ssl_args = grep { /^SSL_/ } sort keys %args;
+			@connection_args{ @ssl_args } = @args{ @ssl_args };
 		}
 
 		$self->_set_handle(
@@ -63,6 +66,7 @@ sub connect {
 				PeerPort => $args{port} || ( $args{secure} ? 5671 : 5672 ),
 				( ! $args{secure} ? ( Proto => 'tcp' ) : () ),
 				( $args{socket_timeout} ? ( Timeout => $args{socket_timeout} ) : () ),
+				%connection_args,
 			) or Carp::croak "Could not connect: $EVAL_ERROR"
 		);
 
