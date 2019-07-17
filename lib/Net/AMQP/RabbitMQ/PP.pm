@@ -3,7 +3,7 @@ package Net::AMQP::RabbitMQ::PP;
 use strict;
 use warnings;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use Carp;
 use Cwd;
@@ -931,7 +931,7 @@ Like L<Net::RabbitMQ> but pure perl rather than a wrapper around librabbitmq.
 
 =head1 VERSION
 
-0.08
+0.09
 
 =head1 SUBROUTINES/METHODS
 
@@ -960,11 +960,13 @@ Connect to the server. Default arguments are shown below:
 	);
 
 connect can also take a secure flag for SSL connections, this will only work if
-L<IO::Socket::SSL> is available
+L<IO::Socket::SSL> is available. You can also pass SSL specific arguments through
+in the connect method and these will be passed through
 
 	$mq->connect(
 		...
 		secure => 1,
+		SSL_blah_blah => 1,
 	);
 
 =head2 disconnect
@@ -1216,6 +1218,7 @@ Contributors:
 
 	Ben Kaufman
 	Jonathan Briggs
+	Piotr Malek
 
 =head1 LICENSE AND COPYRIGHT
 
