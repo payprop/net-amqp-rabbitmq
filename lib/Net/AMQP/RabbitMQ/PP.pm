@@ -3,7 +3,7 @@ package Net::AMQP::RabbitMQ::PP;
 use strict;
 use warnings;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 use Carp;
 use Cwd;
@@ -939,7 +939,7 @@ Like L<Net::RabbitMQ> but pure perl rather than a wrapper around librabbitmq.
 
 =head1 VERSION
 
-0.09
+0.10
 
 =head1 SUBROUTINES/METHODS
 
@@ -965,6 +965,7 @@ Connect to the server. Default arguments are shown below:
 		virtualhost    => '/',
 		heartbeat      => undef,
 		socket_timeout => 5,
+		frame_max      => 131072,
 	);
 
 connect can also take a secure flag for SSL connections, this will only work if

@@ -56,6 +56,5 @@ throws_ok {
 		frame_max => 2048,
 	);
 } $exception, 'frame_max too small';
-eval { $mq->disconnect(); };
 
 done_testing();
