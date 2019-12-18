@@ -26,7 +26,7 @@ Like [Net::RabbitMQ](https://metacpan.org/pod/Net::RabbitMQ) but pure perl rathe
 
 # VERSION
 
-0.09
+0.10
 
 # SUBROUTINES/METHODS
 
@@ -52,6 +52,7 @@ Connect to the server. Default arguments are shown below:
                 virtualhost    => '/',
                 heartbeat      => undef,
                 socket_timeout => 5,
+                frame_max      => 131072,
         );
 
 connect can also take a secure flag for SSL connections, this will only work if
@@ -313,6 +314,7 @@ Contributors:
 
         Ben Kaufman
         Jonathan Briggs
+        Piotr Malek
 
 # LICENSE AND COPYRIGHT
 
