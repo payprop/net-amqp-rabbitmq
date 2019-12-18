@@ -85,6 +85,7 @@ sub connect {
 	my $password = $args{password} || 'guest';
 	my $username = $args{username} || 'guest';
 	my $virtualhost = $args{virtual_host} || '/';
+	my $frame_max = $args{frame_max} || 0;
 	my $heartbeat = $args{heartbeat} || 0;
 
 
@@ -95,6 +96,7 @@ sub connect {
 		username => $username,
 		password => $password,
 		virtual_host => $virtualhost,
+		frame_max => $frame_max,
 		heartbeat => $heartbeat,
 	);
 
@@ -196,8 +198,14 @@ sub _startup {
 		response_type => 'Net::AMQP::Protocol::Connection::Tune',
 	);
 
+	my $server_frame_max = $servertuning->frame_max;
 	my $serverheartbeat = $servertuning->heartbeat;
+	my $frame_max = $args{frame_max} || $server_frame_max || 131072;
 	my $heartbeat = $args{heartbeat} || 0;
+
+    if ( $server_frame_max != 0 && $server_frame_max < $frame_max ) {
+            $frame_max = $server_frame_max;
+    }
 
 	if( $serverheartbeat != 0 && $serverheartbeat < $heartbeat ) {
 		$heartbeat = $serverheartbeat;
@@ -210,7 +218,7 @@ sub _startup {
 		output => [
 			Net::AMQP::Protocol::Connection::TuneOk->new(
 				channel_max => 2047,
-				frame_max => 131072,
+				frame_max => $frame_max,
 				heartbeat => $heartbeat,
 			),
 			Net::AMQP::Protocol::Connection::Open->new(
